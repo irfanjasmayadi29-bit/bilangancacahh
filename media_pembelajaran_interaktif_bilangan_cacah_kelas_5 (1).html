@@ -1,0 +1,1343 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Media Pembelajaran Interaktif: Bilangan Cacah Sampai 100.000</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            blue: '#0284C7',
+                            sky: '#38BDF8',
+                            emerald: '#10B981',
+                            amber: '#F59E0B',
+                            orange: '#F97316',
+                            purple: '#8B5CF6',
+                            rose: '#F43F5E',
+                            bg: '#F0F9FF'
+                        }
+                    },
+                    fontFamily: {
+                        fredoka: ['Fredoka', 'sans-serif'],
+                        poppins: ['Poppins', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #F0F9FF;
+            user-select: none;
+        }
+        h1, h2, h3, h4, .font-heading {
+            font-family: 'Fredoka', sans-serif;
+        }
+        .slide-page {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+            transform: translateY(12px);
+        }
+        .slide-page.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.8);
+        }
+        .memory-card {
+            perspective: 1000px;
+        }
+        .draggable {
+            cursor: grab;
+            touch-action: none;
+        }
+        .draggable:active {
+            cursor: grabbing;
+        }
+        .dropzone.drag-over {
+            background-color: #E0F2FE !important;
+            border-color: #0284C7 !important;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #E0F2FE;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #0284C7;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-slate-800 flex flex-col justify-between relative overflow-x-hidden">
+
+    <!-- TOP BAR NAVIGATION (Slide 2 - 11) -->
+    <header id="top-nav" class="hidden sticky top-0 z-50 bg-white/95 backdrop-blur-md shadow-md border-b-4 border-brand-sky px-4 py-3">
+        <div class="max-w-6xl mx-auto flex items-center justify-between">
+            <button onclick="goToSlide(2)" class="flex items-center gap-2 bg-brand-orange hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-full shadow transition transform hover:scale-105">
+                <i class="fa-solid fa-house"></i>
+                <span class="hidden sm:inline">Menu Utama</span>
+            </button>
+
+            <div class="flex items-center gap-2 font-heading text-slate-700 bg-sky-100 px-4 py-1.5 rounded-full border border-sky-200">
+                <i class="fa-solid fa-coins text-brand-blue"></i>
+                <span id="current-slide-title" class="text-sm md:text-base font-bold text-brand-blue">Judul Slide</span>
+                <span class="text-slate-400 font-normal">|</span>
+                <span id="slide-indicator" class="text-xs md:text-sm text-slate-600 font-bold">2 / 11</span>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <button onclick="prevSlide()" id="btn-prev" class="bg-brand-blue hover:bg-blue-700 text-white p-2 sm:px-3 sm:py-2 rounded-full font-bold shadow transition hover:scale-105 disabled:opacity-50">
+                    <i class="fa-solid fa-arrow-left"></i> <span class="hidden sm:inline">Sebelumnya</span>
+                </button>
+                <button onclick="nextSlide()" id="btn-next" class="bg-brand-blue hover:bg-blue-700 text-white p-2 sm:px-3 sm:py-2 rounded-full font-bold shadow transition hover:scale-105 disabled:opacity-50">
+                    <span class="hidden sm:inline">Selanjutnya</span> <i class="fa-solid fa-arrow-right"></i>
+                </button>
+                <button onclick="toggleFullscreen()" class="bg-slate-700 hover:bg-slate-800 text-white p-2 sm:px-3 sm:py-2 rounded-full shadow transition hover:scale-105" title="Layar Penuh">
+                    <i class="fa-solid fa-expand" id="fullscreen-icon"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- FLOATING FULLSCREEN BUTTON FOR COVER & MENU -->
+    <button id="floating-fullscreen" onclick="toggleFullscreen()" class="fixed top-4 right-4 z-50 bg-slate-800/80 hover:bg-slate-900 text-white p-3 rounded-full shadow-lg backdrop-blur-sm transition transform hover:scale-110">
+        <i class="fa-solid fa-expand" id="float-fullscreen-icon"></i>
+    </button>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="flex-grow flex items-center justify-center p-3 sm:p-6">
+        <div class="w-full max-w-5xl">
+
+            <!-- ================= SLIDE 1: COVER ================= -->
+            <section id="slide-1" class="slide-page active">
+                <div class="glass-card rounded-3xl p-6 md:p-10 text-center shadow-2xl border-4 border-sky-300 relative overflow-hidden bg-gradient-to-b from-sky-100 via-white to-sky-50">
+                    <!-- Background Decor -->
+                    <div class="absolute -top-10 -left-10 w-44 h-44 bg-amber-200/50 rounded-full blur-xl"></div>
+                    <div class="absolute -bottom-10 -right-10 w-44 h-44 bg-sky-300/50 rounded-full blur-xl"></div>
+
+                    <span class="inline-block bg-brand-amber text-slate-900 font-bold px-4 py-1.5 rounded-full text-xs md:text-sm uppercase tracking-wide mb-4 shadow">
+                        <i class="fa-solid fa-certificate mr-1"></i> Kurikulum Merdeka - Matematika SD Kelas 5
+                    </span>
+
+                    <h1 class="text-3xl md:text-5xl font-black text-brand-blue mb-2 leading-tight tracking-wide">
+                        BILANGAN CACAH SAMPAI 100.000
+                    </h1>
+                    <p class="text-base md:text-xl text-slate-600 font-semibold mb-6">
+                        Membaca, Menulis, Nilai Tempat, Komposisi & Dekomposisi
+                    </p>
+
+                    <!-- SVG Illustration -->
+                    <div class="my-6 max-w-lg mx-auto transform hover:scale-105 transition duration-300">
+                        <svg viewBox="0 0 500 210" class="w-full h-auto drop-shadow-lg">
+                            <rect x="15" y="15" width="470" height="180" rx="24" fill="#E0F2FE" stroke="#0284C7" stroke-width="4"/>
+                            <!-- Abacus / Money Cards Visual -->
+                            <g transform="translate(45, 40)">
+                                <!-- 50.000 Note -->
+                                <rect x="0" y="0" width="110" height="60" rx="8" fill="#38BDF8" stroke="#0284C7" stroke-width="2"/>
+                                <text x="55" y="35" text-anchor="middle" font-family="Fredoka" font-size="16" font-weight="bold" fill="#FFF">Rp 50.000</text>
+                                
+                                <!-- 20.000 Note -->
+                                <rect x="125" y="0" width="110" height="60" rx="8" fill="#10B981" stroke="#047857" stroke-width="2"/>
+                                <text x="180" y="35" text-anchor="middle" font-family="Fredoka" font-size="16" font-weight="bold" fill="#FFF">Rp 20.000</text>
+                                
+                                <!-- 10.000 Note -->
+                                <rect x="250" y="0" width="110" height="60" rx="8" fill="#8B5CF6" stroke="#6D28D9" stroke-width="2"/>
+                                <text x="305" y="35" text-anchor="middle" font-family="Fredoka" font-size="16" font-weight="bold" fill="#FFF">Rp 10.000</text>
+                            </g>
+
+                            <!-- Place Value Blocks -->
+                            <g transform="translate(60, 120)">
+                                <rect x="0" y="0" width="80" height="45" rx="10" fill="#F59E0B"/>
+                                <text x="40" y="27" text-anchor="middle" font-family="Fredoka" font-size="14" font-weight="bold" fill="#FFF">70.000</text>
+                                <text x="40" y="40" text-anchor="middle" font-family="Poppins" font-size="9" fill="#FFF">Puluh Ribuan</text>
+
+                                <rect x="95" y="0" width="80" height="45" rx="10" fill="#F97316"/>
+                                <text x="135" y="27" text-anchor="middle" font-family="Fredoka" font-size="14" font-weight="bold" fill="#FFF">5.000</text>
+                                <text x="135" y="40" text-anchor="middle" font-family="Poppins" font-size="9" fill="#FFF">Ribuan</text>
+
+                                <rect x="190" y="0" width="80" height="45" rx="10" fill="#3B82F6"/>
+                                <text x="230" y="27" text-anchor="middle" font-family="Fredoka" font-size="14" font-weight="bold" fill="#FFF">400</text>
+                                <text x="230" y="40" text-anchor="middle" font-family="Poppins" font-size="9" fill="#FFF">Ratusan</text>
+
+                                <rect x="285" y="0" width="80" height="45" rx="10" fill="#EC4899"/>
+                                <text x="325" y="27" text-anchor="middle" font-family="Fredoka" font-size="14" font-weight="bold" fill="#FFF">20 + 5</text>
+                                <text x="325" y="40" text-anchor="middle" font-family="Poppins" font-size="9" fill="#FFF">Puluhan & Satuan</text>
+                            </g>
+                        </svg>
+                    </div>
+
+                    <!-- Creator Info -->
+                    <div class="mb-8 inline-flex items-center gap-3 bg-white px-5 py-2.5 rounded-2xl shadow-md border border-slate-200">
+                        <div class="w-10 h-10 rounded-full bg-brand-blue text-white flex items-center justify-center font-bold text-lg">
+                            <i class="fa-solid fa-user-graduate"></i>
+                        </div>
+                        <div class="text-left">
+                            <p class="text-xs text-slate-500 font-semibold uppercase">Penyusun:</p>
+                            <p class="text-base font-bold text-slate-800">Irfan Jasmayadi, S.Pd</p>
+                            <p class="text-xs text-slate-500">SD Negeri 1 Wanagiri Kauh</p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <button onclick="goToSlide(2)" class="bg-gradient-to-r from-brand-orange to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-heading text-xl font-bold py-4 px-10 rounded-full shadow-xl transform transition hover:-translate-y-1 hover:scale-105 flex items-center gap-3 mx-auto">
+                            <i class="fa-solid fa-play"></i> Mulai Belajar
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= SLIDE 2: MENU UTAMA ================= -->
+            <section id="slide-2" class="slide-page">
+                <div class="glass-card rounded-3xl p-6 md:p-8 shadow-2xl border-4 border-sky-300">
+                    <div class="text-center mb-6">
+                        <h2 class="text-3xl font-bold text-brand-blue">Menu Pembelajaran</h2>
+                        <p class="text-slate-600">Pilih materi atau modul interaktif yang ingin kamu pelajari hari ini!</p>
+                    </div>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 md:gap-6">
+                        <button onclick="goToSlide(3)" class="bg-gradient-to-br from-blue-400 to-blue-600 hover:from-blue-500 hover:to-blue-700 text-white p-5 rounded-2xl shadow-lg flex flex-col items-center justify-center gap-3 transform transition hover:-translate-y-1 hover:scale-105 group">
+                            <div class="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center text-3xl group-hover:rotate-12 transition">
+                                <i class="fa-solid fa-bullseye"></i>
+                            </div>
+                            <span class="font-heading font-bold text-lg text-center">Tujuan Pembelajaran</span>
+                        </button>
+
+                        <button onclick="goToSlide(4)" class="bg-gradient-to-br from-teal-400 to-teal-600 hover:from-teal-500 hover:to-teal-700 text-white p-5 rounded-2xl shadow-lg flex flex-col items-center justify-center gap-3 transform transition hover:-translate-y-1 hover:scale-105 group">
+                            <div class="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center text-3xl group-hover:rotate-12 transition">
+                                <i class="fa-solid fa-sitemap"></i>
+                            </div>
+                            <span class="font-heading font-bold text-lg text-center">Peta Konsep</span>
+                        </button>
+
+                        <button onclick="goToSlide(5)" class="bg-gradient-to-br from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white p-5 rounded-2xl shadow-lg flex flex-col items-center justify-center gap-3 transform transition hover:-translate-y-1 hover:scale-105 group">
+                            <div class="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center text-3xl group-hover:rotate-12 transition">
+                                <i class="fa-solid fa-book-open"></i>
+                            </div>
+                            <span class="font-heading font-bold text-lg text-center">Materi Inti</span>
+                        </button>
+
+                        <button onclick="goToSlide(6)" class="bg-gradient-to-br from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700 text-white p-5 rounded-2xl shadow-lg flex flex-col items-center justify-center gap-3 transform transition hover:-translate-y-1 hover:scale-105 group">
+                            <div class="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center text-3xl group-hover:rotate-12 transition">
+                                <i class="fa-solid fa-circle-play"></i>
+                            </div>
+                            <span class="font-heading font-bold text-lg text-center">Video Pembelajaran</span>
+                        </button>
+
+                        <button onclick="goToSlide(7)" class="bg-gradient-to-br from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white p-5 rounded-2xl shadow-lg flex flex-col items-center justify-center gap-3 transform transition hover:-translate-y-1 hover:scale-105 group">
+                            <div class="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center text-3xl group-hover:rotate-12 transition">
+                                <i class="fa-solid fa-calculator"></i>
+                            </div>
+                            <span class="font-heading font-bold text-lg text-center">Simulasi Uang & Nilai Tempat</span>
+                        </button>
+
+                        <button onclick="goToSlide(8)" class="bg-gradient-to-br from-emerald-400 to-green-600 hover:from-emerald-500 hover:to-green-700 text-white p-5 rounded-2xl shadow-lg flex flex-col items-center justify-center gap-3 transform transition hover:-translate-y-1 hover:scale-105 group">
+                            <div class="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center text-3xl group-hover:rotate-12 transition">
+                                <i class="fa-solid fa-gamepad"></i>
+                            </div>
+                            <span class="font-heading font-bold text-lg text-center">Game Edukasi</span>
+                        </button>
+
+                        <button onclick="goToSlide(9)" class="bg-gradient-to-br from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white p-5 rounded-2xl shadow-lg flex flex-col items-center justify-center gap-3 transform transition hover:-translate-y-1 hover:scale-105 group">
+                            <div class="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center text-3xl group-hover:rotate-12 transition">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </div>
+                            <span class="font-heading font-bold text-lg text-center">Kuis Evaluasi</span>
+                        </button>
+
+                        <button onclick="goToSlide(10)" class="bg-gradient-to-br from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white p-5 rounded-2xl shadow-lg flex flex-col items-center justify-center gap-3 transform transition hover:-translate-y-1 hover:scale-105 group">
+                            <div class="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center text-3xl group-hover:rotate-12 transition">
+                                <i class="fa-solid fa-lightbulb"></i>
+                            </div>
+                            <span class="font-heading font-bold text-lg text-center">Rangkuman</span>
+                        </button>
+
+                        <button onclick="goToSlide(11)" class="bg-gradient-to-br from-slate-600 to-slate-800 hover:from-slate-700 hover:to-slate-900 text-white p-5 rounded-2xl shadow-lg flex flex-col items-center justify-center gap-3 transform transition hover:-translate-y-1 hover:scale-105 group col-span-2 sm:col-span-1">
+                            <div class="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center text-3xl group-hover:rotate-12 transition">
+                                <i class="fa-solid fa-bookmark"></i>
+                            </div>
+                            <span class="font-heading font-bold text-lg text-center">Referensi & Penutup</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= SLIDE 3: TUJUAN PEMBELAJARAN ================= -->
+            <section id="slide-3" class="slide-page">
+                <div class="glass-card rounded-3xl p-6 md:p-8 shadow-2xl border-4 border-sky-300">
+                    <h2 class="text-3xl font-bold text-brand-blue mb-6 flex items-center gap-3 border-b-2 border-sky-200 pb-3">
+                        <i class="fa-solid fa-bullseye text-brand-orange"></i> Tujuan Pembelajaran
+                    </h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 my-4">
+                        <div class="bg-white p-6 rounded-2xl shadow-md border-t-4 border-blue-500 flex flex-col items-center text-center">
+                            <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-2xl font-bold mb-4">1</div>
+                            <h3 class="font-heading font-bold text-lg text-slate-800 mb-2">Membaca & Menulis Bilangan</h3>
+                            <p class="text-slate-600 text-sm">Peserta didik mampu membaca dan menuliskan simbol bilangan cacah sampai 100.000 dengan benar.</p>
+                        </div>
+
+                        <div class="bg-white p-6 rounded-2xl shadow-md border-t-4 border-emerald-500 flex flex-col items-center text-center">
+                            <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-2xl font-bold mb-4">2</div>
+                            <h3 class="font-heading font-bold text-lg text-slate-800 mb-2">Menguraikan Nilai Tempat</h3>
+                            <p class="text-slate-600 text-sm">Peserta didik mampu menentukan nilai tempat (puluh ribuan, ribuan, ratusan, puluhan, satuan) serta komposisi & dekomposisinya.</p>
+                        </div>
+
+                        <div class="bg-white p-6 rounded-2xl shadow-md border-t-4 border-amber-500 flex flex-col items-center text-center">
+                            <div class="w-16 h-16 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center text-2xl font-bold mb-4">3</div>
+                            <h3 class="font-heading font-bold text-lg text-slate-800 mb-2">Penyelesaian Masalah Nyata</h3>
+                            <p class="text-slate-600 text-sm">Peserta didik mampu melakukan operasi hitung dan menyelesaikan masalah keuangan/belanja sehari-hari hingga Rp 100.000.</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-sky-50 p-4 rounded-2xl border border-sky-200 mt-6 flex items-center gap-4">
+                        <i class="fa-solid fa-star text-brand-amber text-3xl"></i>
+                        <p class="text-slate-700 text-sm md:text-base font-medium">
+                            <strong>Capaian Pembelajaran (Kurikulum Merdeka):</strong> Pada akhir Fase C, peserta didik memperluas pemahaman dan intuisi bilangan (number sense) pada bilangan cacah sampai 100.000.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= SLIDE 4: PETA KONSEP ================= -->
+            <section id="slide-4" class="slide-page">
+                <div class="glass-card rounded-3xl p-6 md:p-8 shadow-2xl border-4 border-sky-300">
+                    <h2 class="text-3xl font-bold text-brand-blue mb-4 flex items-center gap-3 border-b-2 border-sky-200 pb-3">
+                        <i class="fa-solid fa-sitemap text-teal-500"></i> Peta Konsep Materi
+                    </h2>
+
+                    <div class="bg-sky-50/50 p-6 rounded-2xl border border-sky-200 my-4 overflow-x-auto">
+                        <div class="min-w-[620px] flex flex-col items-center">
+                            <div class="bg-brand-blue text-white font-heading font-bold px-8 py-3 rounded-2xl shadow-lg text-xl mb-8">
+                                BILANGAN CACAH SAMPAI 100.000
+                            </div>
+
+                            <div class="grid grid-cols-4 gap-4 w-full text-center relative">
+                                <div class="flex flex-col items-center">
+                                    <div class="w-1 bg-brand-blue h-6 mb-2"></div>
+                                    <div class="bg-teal-500 text-white font-bold p-3 rounded-xl shadow w-full text-xs sm:text-sm">
+                                        1. Membaca & Menulis
+                                    </div>
+                                    <div class="w-1 bg-teal-500 h-4"></div>
+                                    <div class="bg-white p-2.5 rounded-lg border border-teal-200 shadow text-xs space-y-1 w-full text-slate-700 font-medium">
+                                        <p>• Simbol Angka</p>
+                                        <p>• Sebutan Kata</p>
+                                        <p>• Tanda Titik Ribuan</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex flex-col items-center">
+                                    <div class="w-1 bg-brand-blue h-6 mb-2"></div>
+                                    <div class="bg-amber-500 text-white font-bold p-3 rounded-xl shadow w-full text-xs sm:text-sm">
+                                        2. Nilai Tempat
+                                    </div>
+                                    <div class="w-1 bg-amber-500 h-4"></div>
+                                    <div class="bg-white p-2.5 rounded-lg border border-amber-200 shadow text-xs space-y-1 w-full text-slate-700 font-medium">
+                                        <p>• Puluh Ribuan</p>
+                                        <p>• Ribuan, Ratusan</p>
+                                        <p>• Puluhan & Satuan</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex flex-col items-center">
+                                    <div class="w-1 bg-brand-blue h-6 mb-2"></div>
+                                    <div class="bg-purple-500 text-white font-bold p-3 rounded-xl shadow w-full text-xs sm:text-sm">
+                                        3. Komposisi / Dekomposisi
+                                    </div>
+                                    <div class="w-1 bg-purple-500 h-4"></div>
+                                    <div class="bg-white p-2.5 rounded-lg border border-purple-200 shadow text-xs space-y-1 w-full text-slate-700 font-medium">
+                                        <p>• Penggabungan (Komposisi)</p>
+                                        <p>• Penguraian (Dekomposisi)</p>
+                                        <p>• Bentuk Panjang</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex flex-col items-center">
+                                    <div class="w-1 bg-brand-blue h-6 mb-2"></div>
+                                    <div class="bg-rose-500 text-white font-bold p-3 rounded-xl shadow w-full text-xs sm:text-sm">
+                                        4. Operasi & Uang
+                                    </div>
+                                    <div class="w-1 bg-rose-500 h-4"></div>
+                                    <div class="bg-white p-2.5 rounded-lg border border-rose-200 shadow text-xs space-y-1 w-full text-slate-700 font-medium">
+                                        <p>• Penjumlahan/Pengurangan</p>
+                                        <p>• Pecahan Uang Mainan</p>
+                                        <p>• Belanja & Kembalian</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= SLIDE 5: MATERI INTI (4 Sub-Tabs) ================= -->
+            <section id="slide-5" class="slide-page">
+                <div class="glass-card rounded-3xl p-6 md:p-8 shadow-2xl border-4 border-sky-300">
+                    <h2 class="text-3xl font-bold text-brand-blue mb-4 flex items-center gap-3">
+                        <i class="fa-solid fa-book-open text-purple-600"></i> Materi Inti Pembelajaran
+                    </h2>
+
+                    <!-- Sub-tabs Header -->
+                    <div class="flex flex-wrap gap-2 border-b-2 border-slate-200 pb-3 mb-6">
+                        <button onclick="switchMateriTab(1)" id="materi-tab-1" class="materi-tab-btn px-4 py-2 rounded-xl font-bold text-sm sm:text-base bg-brand-blue text-white shadow">
+                            1. Membaca & Menulis
+                        </button>
+                        <button onclick="switchMateriTab(2)" id="materi-tab-2" class="materi-tab-btn px-4 py-2 rounded-xl font-bold text-sm sm:text-base bg-slate-200 text-slate-700 hover:bg-slate-300">
+                            2. Nilai Tempat
+                        </button>
+                        <button onclick="switchMateriTab(3)" id="materi-tab-3" class="materi-tab-btn px-4 py-2 rounded-xl font-bold text-sm sm:text-base bg-slate-200 text-slate-700 hover:bg-slate-300">
+                            3. Komposisi & Dekomposisi
+                        </button>
+                        <button onclick="switchMateriTab(4)" id="materi-tab-4" class="materi-tab-btn px-4 py-2 rounded-xl font-bold text-sm sm:text-base bg-slate-200 text-slate-700 hover:bg-slate-300">
+                            4. Aplikasi Uang Nyata
+                        </button>
+                    </div>
+
+                    <!-- MATERI SUB-CONTENT 1 -->
+                    <div id="materi-content-1" class="materi-sub-content space-y-4">
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                            <h3 class="text-xl font-bold text-brand-blue mb-2">Membaca & Menulis Bilangan Cacah s.d 100.000</h3>
+                            <p class="text-slate-700 leading-relaxed mb-4">
+                                Bilangan cacah dimulai dari 0, 1, 2, 3, dan seterusnya. Untuk bilangan sampai <strong>100.000</strong>, kita menggunakan tanda titik (.) setiap 3 digit angka dari belakang untuk memisahkan ribuan!
+                            </p>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                                <div class="bg-sky-50 p-4 rounded-xl border border-sky-200">
+                                    <h4 class="font-bold text-brand-blue mb-1"><i class="fa-solid fa-pen"></i> Contoh Tulisan Angka:</h4>
+                                    <p class="text-2xl font-bold font-heading text-slate-800">75.420</p>
+                                    <p class="text-sm text-slate-600 mt-1">Dibaca: <em>"Tujuh puluh lima ribu empat ratus dua puluh"</em></p>
+                                </div>
+                                <div class="bg-amber-50 p-4 rounded-xl border border-amber-200">
+                                    <h4 class="font-bold text-amber-800 mb-1"><i class="fa-solid fa-calculator"></i> Contoh Tulisan Angka:</h4>
+                                    <p class="text-2xl font-bold font-heading text-slate-800">100.000</p>
+                                    <p class="text-sm text-slate-600 mt-1">Dibaca: <em>"Seratus ribu"</em></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- MATERI SUB-CONTENT 2 -->
+                    <div id="materi-content-2" class="materi-sub-content hidden space-y-4">
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                            <h3 class="text-xl font-bold text-brand-blue mb-2">Nilai Tempat Angka</h3>
+                            <p class="text-slate-700 leading-relaxed mb-4">
+                                Setiap digit angka pada bilangan memiliki nilai tempat tertentu bergantung pada posisinya:
+                            </p>
+
+                            <div class="bg-sky-50 p-4 rounded-xl border border-sky-200 overflow-x-auto mb-4">
+                                <table class="w-full text-center border-collapse min-w-[500px]">
+                                    <thead>
+                                        <tr class="bg-brand-blue text-white font-heading">
+                                            <th class="p-2 border">Bilangan</th>
+                                            <th class="p-2 border bg-amber-500">Puluh Ribuan</th>
+                                            <th class="p-2 border bg-orange-500">Ribuan</th>
+                                            <th class="p-2 border bg-blue-500">Ratusan</th>
+                                            <th class="p-2 border bg-emerald-500">Puluhan</th>
+                                            <th class="p-2 border bg-rose-500">Satuan</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="font-bold text-slate-800">
+                                        <tr>
+                                            <td class="p-2 border bg-white">84.325</td>
+                                            <td class="p-2 border bg-amber-100">8 (80.000)</td>
+                                            <td class="p-2 border bg-orange-100">4 (4.000)</td>
+                                            <td class="p-2 border bg-blue-100">3 (300)</td>
+                                            <td class="p-2 border bg-emerald-100">2 (20)</td>
+                                            <td class="p-2 border bg-rose-100">5 (5)</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- MATERI SUB-CONTENT 3 -->
+                    <div id="materi-content-3" class="materi-sub-content hidden space-y-4">
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                            <h3 class="text-xl font-bold text-brand-blue mb-2">Komposisi & Dekomposisi Bilangan</h3>
+                            <p class="text-slate-700 leading-relaxed mb-4">
+                                • <strong>Komposisi:</strong> Menyusun gabungan nilai-nilai tempat menjadi satu bilangan utuh.<br>
+                                • <strong>Dekomposisi:</strong> Menguraikan bilangan utuh menjadi penjumlahan bentuk panjang berdasarkan nilai tempatnya.
+                            </p>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-200">
+                                    <h4 class="font-bold text-emerald-800 mb-2"><i class="fa-solid fa-puzzle-piece"></i> Dekomposisi (Penguraian):</h4>
+                                    <p class="font-mono text-sm bg-white p-3 rounded-lg border">
+                                        67.892 = 60.000 + 7.000 + 800 + 90 + 2
+                                    </p>
+                                </div>
+                                <div class="bg-purple-50 p-4 rounded-xl border border-purple-200">
+                                    <h4 class="font-bold text-purple-800 mb-2"><i class="fa-solid fa-layer-group"></i> Komposisi (Penyusunan):</h4>
+                                    <p class="font-mono text-sm bg-white p-3 rounded-lg border">
+                                        40.000 + 5.000 + 200 + 10 + 6 = 45.216
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- MATERI SUB-CONTENT 4 -->
+                    <div id="materi-content-4" class="materi-sub-content hidden space-y-4">
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                            <h3 class="text-xl font-bold text-brand-blue mb-2">Aplikasi Transaksi & Uang Mainan</h3>
+                            <p class="text-slate-700 leading-relaxed mb-4">
+                                Dalam kehidupan sehari-hari di toko atau pasar, bilangan cacah digunakan untuk mengukur harga barang dan kembalian uang belanja!
+                            </p>
+
+                            <div class="bg-amber-50 p-4 rounded-xl border border-amber-300">
+                                <h4 class="font-bold text-amber-900 flex items-center gap-2">
+                                    <i class="fa-solid fa-store text-brand-orange"></i> Kasus Belanja di Kantin Sekolah:
+                                </h4>
+                                <p class="text-sm text-slate-700 mt-2">
+                                    Ayu membeli tas sekolah seharga <strong>Rp 65.000</strong>. Ia membayar dengan 1 lembar uang <strong>Rp 100.000</strong>. Berapa uang kembalian yang diterima Ayu?
+                                </p>
+                                <div class="bg-white p-3 rounded-lg border border-amber-200 mt-3 text-sm">
+                                    <strong>Penyelesaian:</strong><br>
+                                    Kembalian = 100.000 - 65.000 = <strong>Rp 35.000</strong><br>
+                                    (Dapat dibayar dengan 1 lembar Rp 20.000 + 1 lembar Rp 10.000 + 1 lembar Rp 5.000).
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= SLIDE 6: VIDEO PEMBELAJARAN ================= -->
+            <section id="slide-6" class="slide-page">
+                <div class="glass-card rounded-3xl p-6 md:p-8 shadow-2xl border-4 border-sky-300">
+                    <h2 class="text-3xl font-bold text-brand-blue mb-4 flex items-center gap-3 border-b-2 border-sky-200 pb-3">
+                        <i class="fa-solid fa-circle-play text-red-500"></i> Video Pembelajaran Interaktif
+                    </h2>
+                    <p class="text-slate-600 mb-6">Simak penjelasan materi bilangan cacah melalui video pembelajaran berikut ini:</p>
+
+                    <div class="relative w-full rounded-2xl overflow-hidden shadow-2xl border-4 border-white bg-black aspect-video max-w-3xl mx-auto">
+                        <iframe 
+                            class="absolute top-0 left-0 w-full h-full"
+                            src="https://www.youtube.com/embed/eKEdehtTnRk" 
+                            title="Video Pembelajaran Bilangan Cacah SD"
+                            frameborder="0" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= SLIDE 7: SIMULASI NILAI TEMPAT & PECAN UANG ================= -->
+            <section id="slide-7" class="slide-page">
+                <div class="glass-card rounded-3xl p-6 md:p-8 shadow-2xl border-4 border-sky-300">
+                    <h2 class="text-3xl font-bold text-brand-blue mb-2 flex items-center gap-3">
+                        <i class="fa-solid fa-calculator text-amber-500"></i> Simulasi Kalkulator Nilai Tempat & Uang
+                    </h2>
+                    <p class="text-slate-600 text-sm mb-6">Masukkan angka nominal (maksimal 100.000) untuk melihat penguraian nilai tempat dan komposisi uang kertasnya!</p>
+
+                    <div class="bg-white p-5 rounded-2xl shadow-md border border-slate-200 mb-6">
+                        <div class="flex flex-col sm:flex-row gap-3 items-center">
+                            <div class="flex-grow w-full">
+                                <label class="block text-xs font-bold text-slate-600 mb-1">Masukkan Nilai Bilangan (Rp 0 - 100.000):</label>
+                                <input type="number" id="sim-input-val" value="78500" min="0" max="100000" class="w-full border-2 border-sky-300 rounded-xl px-4 py-2 font-bold text-xl text-brand-blue focus:outline-none focus:border-brand-blue">
+                            </div>
+                            <button onclick="calculateSimulation()" class="w-full sm:w-auto mt-2 sm:mt-5 bg-brand-orange hover:bg-orange-600 text-white font-heading font-bold py-3 px-8 rounded-xl shadow transition active:scale-95 flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i> Simulasikan
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Simulation Result Board -->
+                    <div class="bg-sky-50 p-6 rounded-2xl border-2 border-sky-200 space-y-6">
+                        <div>
+                            <h3 class="font-heading font-bold text-slate-700 text-lg mb-3">1. Penguraian Nilai Tempat:</h3>
+                            <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 text-center" id="sim-place-cards">
+                                <!-- Generated by JS -->
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="font-heading font-bold text-slate-700 text-lg mb-3">2. Ilustrasi Lembar Uang Kertas:</h3>
+                            <div class="flex flex-wrap gap-3 justify-center" id="sim-money-container">
+                                <!-- Generated by JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= SLIDE 8: GAME EDUKASI (5 MODUL) ================= -->
+            <section id="slide-8" class="slide-page">
+                <div class="glass-card rounded-3xl p-6 md:p-8 shadow-2xl border-4 border-sky-300">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b-2 border-sky-200 pb-3 mb-6 gap-2">
+                        <h2 class="text-3xl font-bold text-brand-blue flex items-center gap-3">
+                            <i class="fa-solid fa-gamepad text-emerald-500"></i> Game Edukasi Interaktif
+                        </h2>
+                        <select id="game-selector" onchange="switchGame(this.value)" class="bg-emerald-500 text-white font-bold px-4 py-2 rounded-xl focus:outline-none shadow">
+                            <option value="1">Modul 1: Drag & Drop Nilai Tempat</option>
+                            <option value="2">Modul 2: Drag the Words (Paragraf)</option>
+                            <option value="3">Modul 3: Fill the Words (Isian)</option>
+                            <option value="4">Modul 4: Tebak Gambar Uang</option>
+                            <option value="5">Modul 5: Memory Match Game</option>
+                        </select>
+                    </div>
+
+                    <!-- MODUL 1: DRAG & DROP -->
+                    <div id="game-mod-1" class="game-module">
+                        <h3 class="font-bold text-slate-800 mb-2">Modul 1: Cocokkan Angka dengan Nilai Tempatnya!</h3>
+                        <p class="text-slate-600 text-sm mb-4">Tarik kartu angka di sebelah kiri ke dalam kotak nilai tempat yang tepat di kanan.</p>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-sky-50 p-4 rounded-2xl border border-sky-200">
+                                <h4 class="font-bold text-xs uppercase text-slate-500 mb-3">Kartu Bilangan:</h4>
+                                <div class="space-y-3" id="drag-items-mod1">
+                                    <div draggable="true" ondragstart="dragStart(event)" id="d1" data-val="50000" class="draggable bg-white p-3 rounded-xl shadow border-2 border-brand-blue font-bold text-center text-slate-800">
+                                        50.000
+                                    </div>
+                                    <div draggable="true" ondragstart="dragStart(event)" id="d2" data-val="7000" class="draggable bg-white p-3 rounded-xl shadow border-2 border-brand-blue font-bold text-center text-slate-800">
+                                        7.000
+                                    </div>
+                                    <div draggable="true" ondragstart="dragStart(event)" id="d3" data-val="400" class="draggable bg-white p-3 rounded-xl shadow border-2 border-brand-blue font-bold text-center text-slate-800">
+                                        400
+                                    </div>
+                                    <div draggable="true" ondragstart="dragStart(event)" id="d4" data-val="80" class="draggable bg-white p-3 rounded-xl shadow border-2 border-brand-blue font-bold text-center text-slate-800">
+                                        80
+                                    </div>
+                                    <div draggable="true" ondragstart="dragStart(event)" id="d5" data-val="9" class="draggable bg-white p-3 rounded-xl shadow border-2 border-brand-blue font-bold text-center text-slate-800">
+                                        9
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="space-y-3">
+                                <h4 class="font-bold text-xs uppercase text-slate-500 mb-3">Kotak Tempat:</h4>
+                                <div class="dropzone border-2 border-dashed border-slate-300 p-3 rounded-xl bg-white flex justify-between items-center" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropItem(event, '50000')">
+                                    <span class="font-bold text-brand-orange">5 Puluh Ribuan</span>
+                                    <span class="dropped-target text-slate-400 text-sm">Taruh di sini</span>
+                                </div>
+                                <div class="dropzone border-2 border-dashed border-slate-300 p-3 rounded-xl bg-white flex justify-between items-center" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropItem(event, '7000')">
+                                    <span class="font-bold text-brand-orange">7 Ribuan</span>
+                                    <span class="dropped-target text-slate-400 text-sm">Taruh di sini</span>
+                                </div>
+                                <div class="dropzone border-2 border-dashed border-slate-300 p-3 rounded-xl bg-white flex justify-between items-center" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropItem(event, '400')">
+                                    <span class="font-bold text-brand-orange">4 Ratusan</span>
+                                    <span class="dropped-target text-slate-400 text-sm">Taruh di sini</span>
+                                </div>
+                                <div class="dropzone border-2 border-dashed border-slate-300 p-3 rounded-xl bg-white flex justify-between items-center" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropItem(event, '80')">
+                                    <span class="font-bold text-brand-orange">8 Puluhan</span>
+                                    <span class="dropped-target text-slate-400 text-sm">Taruh di sini</span>
+                                </div>
+                                <div class="dropzone border-2 border-dashed border-slate-300 p-3 rounded-xl bg-white flex justify-between items-center" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropItem(event, '9')">
+                                    <span class="font-bold text-brand-orange">9 Satuan</span>
+                                    <span class="dropped-target text-slate-400 text-sm">Taruh di sini</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- MODUL 2: DRAG THE WORDS -->
+                    <div id="game-mod-2" class="game-module hidden">
+                        <h3 class="font-bold text-slate-800 mb-2">Modul 2: Lengkapi Paragraf (Drag Words)</h3>
+                        <p class="text-slate-600 text-sm mb-4">Tarik kata-kata kunci di bawah ini ke dalam titik-titik kalimat paragraf cerita!</p>
+
+                        <div class="bg-amber-50 p-4 rounded-xl border border-amber-200 mb-6 flex flex-wrap gap-3" id="word-bank-mod2">
+                            <span draggable="true" ondragstart="dragStartWord(event)" id="w1" class="draggable bg-white px-3 py-1.5 rounded-lg border-2 border-amber-400 font-bold text-amber-900 shadow">puluh ribuan</span>
+                            <span draggable="true" ondragstart="dragStartWord(event)" id="w2" class="draggable bg-white px-3 py-1.5 rounded-lg border-2 border-amber-400 font-bold text-amber-900 shadow">titik</span>
+                            <span draggable="true" ondragstart="dragStartWord(event)" id="w3" class="draggable bg-white px-3 py-1.5 rounded-lg border-2 border-amber-400 font-bold text-amber-900 shadow">cacah</span>
+                            <span draggable="true" ondragstart="dragStartWord(event)" id="w4" class="draggable bg-white px-3 py-1.5 rounded-lg border-2 border-amber-400 font-bold text-amber-900 shadow">dekomposisi</span>
+                            <span draggable="true" ondragstart="dragStartWord(event)" id="w5" class="draggable bg-white px-3 py-1.5 rounded-lg border-2 border-amber-400 font-bold text-amber-900 shadow">100.000</span>
+                        </div>
+
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm leading-loose text-slate-700">
+                            Bilangan yang dimulai dari nol dan bernilai positif disebut bilangan 
+                            <span class="dropzone-word border-b-2 border-dashed border-brand-blue inline-block min-w-[90px] text-center font-bold text-brand-blue" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropWord(event, 'cacah')">......</span>. 
+                            Pada kelas 5 SD, kita mempelajari bilangan hingga nilai terbesar yaitu 
+                            <span class="dropzone-word border-b-2 border-dashed border-brand-blue inline-block min-w-[90px] text-center font-bold text-brand-blue" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropWord(event, '100.000')">......</span>. 
+                            Angka 85.000 memiliki nilai tempat tertinggi berupa 
+                            <span class="dropzone-word border-b-2 border-dashed border-brand-blue inline-block min-w-[90px] text-center font-bold text-brand-blue" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropWord(event, 'puluh ribuan')">......</span>. 
+                            Prosedur menguraikan bilangan berdasarkan bentuk panjangnya dinamakan 
+                            <span class="dropzone-word border-b-2 border-dashed border-brand-blue inline-block min-w-[90px] text-center font-bold text-brand-blue" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropWord(event, 'dekomposisi')">......</span>. 
+                            Pemisah angka ribuan dalam tulisan simbol matematika ditandai dengan simbol 
+                            <span class="dropzone-word border-b-2 border-dashed border-brand-blue inline-block min-w-[90px] text-center font-bold text-brand-blue" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropWord(event, 'titik')">......</span>.
+                        </div>
+                    </div>
+
+                    <!-- MODUL 3: FILL THE WORDS -->
+                    <div id="game-mod-3" class="game-module hidden">
+                        <h3 class="font-bold text-slate-800 mb-2">Modul 3: Isi Kolom Kosong Paragraf</h3>
+                        <p class="text-slate-600 text-sm mb-4">Ketik jawaban yang tepat pada kolom isian di bawah!</p>
+
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm leading-loose text-slate-700">
+                            Bapak memiliki 4 lembar uang Rp 20.000, jumlah uang bapak seluruhnya adalah Rp 
+                            <input type="text" id="fill-1" class="border-2 border-sky-300 rounded px-2 py-1 text-center w-24 font-bold text-brand-blue" placeholder="80.000">. 
+                            Lambang bilangan "empat puluh tiga ribu lima ratus" ditulis 
+                            <input type="text" id="fill-2" class="border-2 border-sky-300 rounded px-2 py-1 text-center w-24 font-bold text-brand-blue" placeholder="43.500">. 
+                            Pada bilangan 92.410, angka 2 menempati nilai tempat 
+                            <input type="text" id="fill-3" class="border-2 border-sky-300 rounded px-2 py-1 text-center w-24 font-bold text-brand-blue" placeholder="ribuan">. 
+                            Bentuk panjang 50.000 + 400 + 6 adalah 
+                            <input type="text" id="fill-4" class="border-2 border-sky-300 rounded px-2 py-1 text-center w-24 font-bold text-brand-blue" placeholder="50.406">. 
+                            Jika membeli barang Rp 15.000 dengan uang Rp 50.000, kembaliannya adalah Rp 
+                            <input type="text" id="fill-5" class="border-2 border-sky-300 rounded px-2 py-1 text-center w-24 font-bold text-brand-blue" placeholder="35.000">.
+                        </div>
+
+                        <button onclick="checkFillWords()" class="mt-4 bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-6 rounded-xl shadow">
+                            Cek Jawaban Isian
+                        </button>
+                    </div>
+
+                    <!-- MODUL 4: TEBAK GAMBAR UANG -->
+                    <div id="game-mod-4" class="game-module hidden">
+                        <h3 class="font-bold text-slate-800 mb-2">Modul 4: Tebak Nominal Gambar Uang</h3>
+                        <p class="text-slate-600 text-sm mb-4">Hitung total nominal dari lembaran uang pada gambar!</p>
+
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm text-center">
+                            <div class="max-w-md mx-auto mb-4 bg-sky-50 p-4 rounded-xl border flex justify-center gap-2">
+                                <div class="bg-sky-400 text-white font-bold px-4 py-6 rounded-lg shadow">Rp 50.000</div>
+                                <div class="bg-emerald-500 text-white font-bold px-4 py-6 rounded-lg shadow">Rp 20.000</div>
+                                <div class="bg-purple-500 text-white font-bold px-4 py-6 rounded-lg shadow">Rp 10.000</div>
+                            </div>
+
+                            <p class="font-bold text-slate-800 mb-4">Berapakah jumlah total dari 1 lembar 50rb + 1 lembar 20rb + 1 lembar 10rb?</p>
+
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-lg mx-auto">
+                                <button onclick="answerTebakGambar(false)" class="bg-sky-100 hover:bg-sky-200 text-sky-900 font-bold py-3 rounded-xl border border-sky-300">Rp 70.000</button>
+                                <button onclick="answerTebakGambar(true)" class="bg-sky-100 hover:bg-sky-200 text-sky-900 font-bold py-3 rounded-xl border border-sky-300">Rp 80.000</button>
+                                <button onclick="answerTebakGambar(false)" class="bg-sky-100 hover:bg-sky-200 text-sky-900 font-bold py-3 rounded-xl border border-sky-300">Rp 90.000</button>
+                                <button onclick="answerTebakGambar(false)" class="bg-sky-100 hover:bg-sky-200 text-sky-900 font-bold py-3 rounded-xl border border-sky-300">Rp 100.000</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- MODUL 5: MEMORY GAME -->
+                    <div id="game-mod-5" class="game-module hidden">
+                        <h3 class="font-bold text-slate-800 mb-2">Modul 5: Memory Match Kartu Bilangan</h3>
+                        <p class="text-slate-600 text-sm mb-4">Cocokkan pasangan antara Angka dan Tulisan Pembacaannya!</p>
+
+                        <div class="grid grid-cols-4 sm:grid-cols-5 gap-3 max-w-xl mx-auto" id="memory-grid">
+                            <!-- Cards via JS -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= SLIDE 9: KUIS INTERAKTIF ================= -->
+            <section id="slide-9" class="slide-page">
+                <div class="glass-card rounded-3xl p-6 md:p-8 shadow-2xl border-4 border-sky-300">
+                    <div class="flex justify-between items-center border-b-2 border-sky-200 pb-3 mb-6">
+                        <h2 class="text-3xl font-bold text-brand-blue flex items-center gap-3">
+                            <i class="fa-solid fa-pen-to-square text-pink-500"></i> Kuis Evaluasi Interaktif
+                        </h2>
+                        <span id="quiz-progress" class="bg-pink-100 text-pink-600 font-bold px-3 py-1 rounded-full text-sm">
+                            Soal 1 dari 10
+                        </span>
+                    </div>
+
+                    <div id="quiz-container" class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                        <h3 id="quiz-question" class="text-lg md:text-xl font-bold text-slate-800 mb-4">
+                            1. Angka 7 pada bilangan 74.250 menempati nilai tempat...
+                        </h3>
+
+                        <div id="quiz-options" class="space-y-3 mb-6">
+                            <!-- Options rendered via JS -->
+                        </div>
+
+                        <div id="quiz-feedback" class="hidden p-4 rounded-xl font-bold text-sm mb-4"></div>
+
+                        <button id="btn-submit-quiz" onclick="submitQuizAnswer()" class="w-full bg-brand-blue hover:bg-blue-600 text-white font-heading font-bold py-3 rounded-xl shadow transition">
+                            Jawab / Lanjut
+                        </button>
+                    </div>
+
+                    <!-- Quiz Score Result Box -->
+                    <div id="quiz-result" class="hidden text-center bg-white p-8 rounded-2xl border border-slate-200 shadow-lg">
+                        <div class="w-24 h-24 rounded-full bg-yellow-100 text-yellow-500 text-5xl flex items-center justify-center mx-auto mb-4 border-4 border-yellow-300">
+                            <i class="fa-solid fa-trophy"></i>
+                        </div>
+                        <h3 class="text-3xl font-bold text-slate-800 mb-2">Kuis Selesai!</h3>
+                        <p class="text-slate-600 mb-4">Skor Akhir Kamu:</p>
+                        <div id="final-score" class="text-6xl font-black text-brand-blue font-heading mb-6">100</div>
+                        <p id="motivation-msg" class="text-lg font-bold text-emerald-600 mb-6">Luar biasa! Kamu sangat menguasai bilangan cacah sampai 100.000!</p>
+                        
+                        <button onclick="resetQuiz()" class="bg-brand-orange hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-full shadow transition transform hover:scale-105">
+                            <i class="fa-solid fa-rotate-right"></i> Coba Lagi
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= SLIDE 10: RANGKUMAN ================= -->
+            <section id="slide-10" class="slide-page">
+                <div class="glass-card rounded-3xl p-6 md:p-8 shadow-2xl border-4 border-sky-300">
+                    <h2 class="text-3xl font-bold text-brand-blue mb-6 flex items-center gap-3 border-b-2 border-sky-200 pb-3">
+                        <i class="fa-solid fa-lightbulb text-yellow-500"></i> Rangkuman Materi
+                    </h2>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                        <div class="bg-white p-5 rounded-2xl shadow-md border-t-4 border-blue-500">
+                            <h3 class="font-heading font-bold text-blue-600 text-lg mb-2"><i class="fa-solid fa-hashtag"></i> Bilangan Cacah</h3>
+                            <p class="text-xs text-slate-600 leading-relaxed">Himpunan bilangan yang dimulai dari angka 0, 1, 2, 3... sampai 100.000 tanpa nilai pecahan atau negatif.</p>
+                        </div>
+
+                        <div class="bg-white p-5 rounded-2xl shadow-md border-t-4 border-amber-500">
+                            <h3 class="font-heading font-bold text-amber-600 text-lg mb-2"><i class="fa-solid fa-layer-group"></i> Nilai Tempat</h3>
+                            <p class="text-xs text-slate-600 leading-relaxed">Terdiri dari Puluh Ribuan, Ribuan, Ratusan, Puluhan, dan Satuan. Ditulis pisah titik tiap 3 angka ribuan.</p>
+                        </div>
+
+                        <div class="bg-white p-5 rounded-2xl shadow-md border-t-4 border-emerald-500">
+                            <h3 class="font-heading font-bold text-emerald-600 text-lg mb-2"><i class="fa-solid fa-puzzle-piece"></i> Dekomposisi</h3>
+                            <p class="text-xs text-slate-600 leading-relaxed">Menguraikan bilangan menjadi bentuk penjumlahan: 45.230 = 40.000 + 5.000 + 200 + 30 + 0.</p>
+                        </div>
+
+                        <div class="bg-white p-5 rounded-2xl shadow-md border-t-4 border-purple-500">
+                            <h3 class="font-heading font-bold text-purple-600 text-lg mb-2"><i class="fa-solid fa-money-bill-wave"></i> Uang Mainan</h3>
+                            <p class="text-xs text-slate-600 leading-relaxed">Pecahan lembar uang kertas rupiah (Rp 100rb, 50rb, 20rb, 10rb, 5rb, 2rb, 1rb) merepresentasikan nilai tempat cacah.</p>
+                        </div>
+
+                        <div class="bg-white p-5 rounded-2xl shadow-md border-t-4 border-rose-500">
+                            <h3 class="font-heading font-bold text-rose-600 text-lg mb-2"><i class="fa-solid fa-cart-shopping"></i> Belanja & Kembalian</h3>
+                            <p class="text-xs text-slate-600 leading-relaxed">Hitung Kembalian = Uang Pembayaran dikurangi Total Harga Belanjaan.</p>
+                        </div>
+
+                        <div class="bg-white p-5 rounded-2xl shadow-md border-t-4 border-cyan-500">
+                            <h3 class="font-heading font-bold text-cyan-600 text-lg mb-2"><i class="fa-solid fa-check-double"></i> Tanda Titik Ribuan</h3>
+                            <p class="text-xs text-slate-600 leading-relaxed">Tanda titik digunakan memisahkan setiap 3 digit dari belakang (Contoh: 10.000, 75.500).</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= SLIDE 11: REFERENSI & PENUTUP ================= -->
+            <section id="slide-11" class="slide-page">
+                <div class="glass-card rounded-3xl p-6 md:p-8 shadow-2xl border-4 border-sky-300 text-center">
+                    <h2 class="text-3xl font-bold text-brand-blue mb-4">Referensi & Ucapan Penutup</h2>
+                    
+                    <div class="max-w-xl mx-auto bg-white p-6 rounded-2xl shadow-md border border-slate-200 mb-6 text-left">
+                        <h3 class="font-bold text-slate-800 mb-3 border-b pb-2"><i class="fa-solid fa-book text-brand-sky"></i> Sumber Belajar:</h3>
+                        <ul class="text-sm text-slate-600 space-y-2 list-disc list-inside">
+                            <li>Buku Siswa Matematika SD Kelas V - Kurikulum Merdeka (Kemendikbudristek RI 2022)</li>
+                            <li>Buku Panduan Guru Matematika Kelas V SD</li>
+                            <li>Bahan Ajar Bilangan Cacah SD Negeri 1 Wanagiri Kauh</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-gradient-to-r from-brand-blue to-brand-sky text-white p-6 rounded-2xl shadow-lg max-w-xl mx-auto mb-8">
+                        <i class="fa-solid fa-heart text-pink-300 text-4xl mb-3"></i>
+                        <h3 class="text-2xl font-bold font-heading mb-1">Terima Kasih & Selamat Belajar!</h3>
+                        <p class="text-sm text-sky-100">"Matematika itu seru dan berguna dalam kehidupan sehari-hari!"</p>
+                    </div>
+
+                    <div class="flex flex-wrap justify-center gap-4">
+                        <button onclick="goToSlide(1)" class="bg-brand-orange hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-full shadow transition transform hover:scale-105">
+                            <i class="fa-solid fa-rotate-left"></i> Kembali ke Halaman Utama
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="text-center py-3 text-xs text-slate-500 font-medium">
+        &copy; Media Pembelajaran Interaktif Matematika Kelas 5 SD | Irfan Jasmayadi, S.Pd (SD Negeri 1 Wanagiri Kauh)
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // SLIDE MANAGEMENT
+        let currentSlide = 1;
+        const totalSlides = 11;
+
+        const slideTitles = [
+            "",
+            "Cover",
+            "Menu Utama",
+            "Tujuan Pembelajaran",
+            "Peta Konsep",
+            "Materi Inti",
+            "Video Pembelajaran",
+            "Simulasi Uang & Tempat",
+            "Game Edukasi",
+            "Kuis Evaluasi",
+            "Rangkuman",
+            "Referensi & Penutup"
+        ];
+
+        function updateSlideUI() {
+            for (let i = 1; i <= totalSlides; i++) {
+                const s = document.getElementById(`slide-${i}`);
+                if (s) s.classList.remove('active');
+            }
+
+            const activeS = document.getElementById(`slide-${currentSlide}`);
+            if (activeS) activeS.classList.add('active');
+
+            const topNav = document.getElementById('top-nav');
+            const floatBtn = document.getElementById('floating-fullscreen');
+            
+            if (currentSlide >= 2) {
+                topNav.classList.remove('hidden');
+                floatBtn.classList.add('hidden');
+            } else {
+                topNav.classList.add('hidden');
+                floatBtn.classList.remove('hidden');
+            }
+
+            document.getElementById('current-slide-title').innerText = slideTitles[currentSlide] || "";
+            document.getElementById('slide-indicator').innerText = `${currentSlide} / ${totalSlides}`;
+
+            document.getElementById('btn-prev').disabled = (currentSlide <= 1);
+            document.getElementById('btn-next').disabled = (currentSlide >= totalSlides);
+
+            if (currentSlide === 7) calculateSimulation();
+            if (currentSlide === 8) switchGame(document.getElementById('game-selector').value || '1');
+            if (currentSlide === 9 && quizCurrentIndex === 0) renderQuizQuestion();
+        }
+
+        function goToSlide(n) {
+            if (n >= 1 && n <= totalSlides) {
+                currentSlide = n;
+                updateSlideUI();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides) goToSlide(currentSlide + 1);
+        }
+
+        function prevSlide() {
+            if (currentSlide > 1) goToSlide(currentSlide - 1);
+        }
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log("Error full screen:", err);
+                });
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen();
+            }
+        }
+
+        // MATERI SUB TABS
+        function switchMateriTab(tabIndex) {
+            for (let i = 1; i <= 4; i++) {
+                const btn = document.getElementById(`materi-tab-${i}`);
+                const content = document.getElementById(`materi-content-${i}`);
+                if (i === tabIndex) {
+                    btn.className = "materi-tab-btn px-4 py-2 rounded-xl font-bold text-sm sm:text-base bg-brand-blue text-white shadow";
+                    content.classList.remove('hidden');
+                } else {
+                    btn.className = "materi-tab-btn px-4 py-2 rounded-xl font-bold text-sm sm:text-base bg-slate-200 text-slate-700 hover:bg-slate-300";
+                    content.classList.add('hidden');
+                }
+            }
+        }
+
+        // SIMULASI KALKULATOR NILAI TEMPAT & UANG
+        function calculateSimulation() {
+            const inputVal = parseInt(document.getElementById('sim-input-val').value) || 0;
+            const val = Math.min(100000, Math.max(0, inputVal));
+
+            // Breakdown Place Value
+            const strVal = val.toString().padStart(5, '0');
+            const puluhRibuan = parseInt(strVal[0]) * 10000;
+            const ribuan = parseInt(strVal[1]) * 1000;
+            const ratusan = parseInt(strVal[2]) * 100;
+            const puluhan = parseInt(strVal[3]) * 10;
+            const satuan = parseInt(strVal[4]);
+
+            const cardsContainer = document.getElementById('sim-place-cards');
+            cardsContainer.innerHTML = `
+                <div class="bg-amber-100 p-3 rounded-xl border border-amber-300">
+                    <span class="block text-xs font-bold text-amber-800">Puluh Ribuan</span>
+                    <span class="text-lg font-black text-amber-900">${puluhRibuan.toLocaleString('id-ID')}</span>
+                </div>
+                <div class="bg-orange-100 p-3 rounded-xl border border-orange-300">
+                    <span class="block text-xs font-bold text-orange-800">Ribuan</span>
+                    <span class="text-lg font-black text-orange-900">${ribuan.toLocaleString('id-ID')}</span>
+                </div>
+                <div class="bg-blue-100 p-3 rounded-xl border border-blue-300">
+                    <span class="block text-xs font-bold text-blue-800">Ratusan</span>
+                    <span class="text-lg font-black text-blue-900">${ratusan.toLocaleString('id-ID')}</span>
+                </div>
+                <div class="bg-emerald-100 p-3 rounded-xl border border-emerald-300">
+                    <span class="block text-xs font-bold text-emerald-800">Puluhan</span>
+                    <span class="text-lg font-black text-emerald-900">${puluhan.toLocaleString('id-ID')}</span>
+                </div>
+                <div class="bg-rose-100 p-3 rounded-xl border border-rose-300">
+                    <span class="block text-xs font-bold text-rose-800">Satuan</span>
+                    <span class="text-lg font-black text-rose-900">${satuan.toLocaleString('id-ID')}</span>
+                </div>
+            `;
+
+            // Breakdown Money
+            let rem = val;
+            const notes = [
+                { name: '100.000', val: 100000, bg: 'bg-rose-500' },
+                { name: '50.000', val: 50000, bg: 'bg-sky-500' },
+                { name: '20.000', val: 20000, bg: 'bg-emerald-500' },
+                { name: '10.000', val: 10000, bg: 'bg-purple-500' },
+                { name: '5.000', val: 5000, bg: 'bg-amber-600' },
+                { name: '2.000', val: 2000, bg: 'bg-slate-400' },
+                { name: '1.000', val: 1000, bg: 'bg-yellow-700' }
+            ];
+
+            const moneyContainer = document.getElementById('sim-money-container');
+            moneyContainer.innerHTML = '';
+
+            notes.forEach(note => {
+                const count = Math.floor(rem / note.val);
+                if (count > 0) {
+                    rem %= note.val;
+                    for (let i = 0; i < count; i++) {
+                        const noteDiv = document.createElement('div');
+                        noteDiv.className = `${note.bg} text-white font-bold px-4 py-3 rounded-xl shadow border-2 border-white flex items-center gap-2 text-sm font-heading`;
+                        noteDiv.innerHTML = `<i class="fa-solid fa-money-bill"></i> Rp ${note.name}`;
+                        moneyContainer.appendChild(noteDiv);
+                    }
+                }
+            });
+
+            if (moneyContainer.children.length === 0) {
+                moneyContainer.innerHTML = `<span class="text-slate-400 font-bold text-sm">Rp 0 (Kosong)</span>`;
+            }
+        }
+
+        // GAME MODULE SWITCHING
+        function switchGame(modId) {
+            for (let i = 1; i <= 5; i++) {
+                const mod = document.getElementById(`game-mod-${i}`);
+                if (mod) {
+                    if (i.toString() === modId.toString()) mod.classList.remove('hidden');
+                    else mod.classList.add('hidden');
+                }
+            }
+            if (modId === '5') initMemoryGame();
+        }
+
+        // DRAG AND DROP MODUL 1
+        function dragStart(ev) {
+            ev.dataTransfer.setData("text", ev.target.id);
+        }
+        function dragOver(ev) {
+            ev.preventDefault();
+            ev.currentTarget.classList.add('drag-over');
+        }
+        function dragLeave(ev) {
+            ev.currentTarget.classList.remove('drag-over');
+        }
+        function dropItem(ev, expectedVal) {
+            ev.preventDefault();
+            ev.currentTarget.classList.remove('drag-over');
+            const dataId = ev.dataTransfer.getData("text");
+            const draggedEl = document.getElementById(dataId);
+            if (!draggedEl) return;
+
+            const val = draggedEl.getAttribute('data-val');
+            if (val === expectedVal) {
+                ev.currentTarget.innerHTML = `<span class="font-bold text-green-600"><i class="fa-solid fa-circle-check"></i> BENAR! (${val})</span>`;
+                draggedEl.remove();
+            } else {
+                alert('Jawaban belum tepat! Coba lagi.');
+            }
+        }
+
+        // DRAG THE WORDS MODUL 2
+        function dragStartWord(ev) {
+            ev.dataTransfer.setData("text", ev.target.id);
+        }
+        function dropWord(ev, expectedWord) {
+            ev.preventDefault();
+            ev.currentTarget.classList.remove('drag-over');
+            const dataId = ev.dataTransfer.getData("text");
+            const draggedEl = document.getElementById(dataId);
+            if (!draggedEl) return;
+
+            const wordText = draggedEl.innerText.trim();
+            if (wordText === expectedWord) {
+                ev.currentTarget.innerText = wordText;
+                ev.currentTarget.classList.add('bg-green-100', 'text-green-700', 'px-2', 'rounded');
+                draggedEl.remove();
+            } else {
+                alert('Kata kurang tepat untuk kalimat ini!');
+            }
+        }
+
+        // FILL WORDS MODUL 3
+        function checkFillWords() {
+            const f1 = document.getElementById('fill-1').value.trim();
+            const f2 = document.getElementById('fill-2').value.trim();
+            const f3 = document.getElementById('fill-3').value.trim().toLowerCase();
+            const f4 = document.getElementById('fill-4').value.trim();
+            const f5 = document.getElementById('fill-5').value.trim();
+
+            let correct = 0;
+            if (f1 === '80.000') correct++;
+            if (f2 === '43.500') correct++;
+            if (f3 === 'ribuan') correct++;
+            if (f4 === '50.406') correct++;
+            if (f5 === '35.000') correct++;
+
+            alert(`Kamu berhasil menjawab ${correct} dari 5 isian kata dengan benar!`);
+        }
+
+        // TEBAK GAMBAR MODUL 4
+        function answerTebakGambar(isCorrect) {
+            if (isCorrect) {
+                alert('Hebat! Jawabanmu BENAR! Totalnya adalah Rp 80.000');
+            } else {
+                alert('Kurang tepat, coba hitung lagi: 50.000 + 20.000 + 10.000');
+            }
+        }
+
+        // MEMORY GAME MODUL 5
+        const memoryCardsData = [
+            { id: 1, content: '40.000', pair: 'A' },
+            { id: 2, content: 'Empat Puluh Ribu', pair: 'A' },
+            { id: 3, content: '75.000', pair: 'B' },
+            { id: 4, content: 'Tujuh Puluh Lima Ribu', pair: 'B' },
+            { id: 5, content: '100.000', pair: 'C' },
+            { id: 6, content: 'Seratus Ribu', pair: 'C' },
+            { id: 7, content: '12.500', pair: 'D' },
+            { id: 8, content: 'Dua Belas Ribu Lima Ratus', pair: 'D' },
+            { id: 9, content: '60.000', pair: 'E' },
+            { id: 10, content: 'Enam Puluh Ribu', pair: 'E' }
+        ];
+        let flippedCards = [];
+        let matchedPairs = 0;
+
+        function initMemoryGame() {
+            const grid = document.getElementById('memory-grid');
+            grid.innerHTML = '';
+            flippedCards = [];
+            matchedPairs = 0;
+
+            const shuffled = [...memoryCardsData].sort(() => 0.5 - Math.random());
+
+            shuffled.forEach(card => {
+                const cardDiv = document.createElement('div');
+                cardDiv.className = 'memory-card h-20 bg-sky-200 rounded-xl cursor-pointer shadow border-2 border-sky-400 flex items-center justify-center font-bold text-brand-blue text-xs p-1 text-center';
+                cardDiv.setAttribute('data-pair', card.pair);
+                cardDiv.innerText = '?';
+                cardDiv.onclick = () => flipMemoryCard(cardDiv, card.content);
+                grid.appendChild(cardDiv);
+            });
+        }
+
+        function flipMemoryCard(cardEl, content) {
+            if (flippedCards.length < 2 && !cardEl.classList.contains('matched') && !flippedCards.includes(cardEl)) {
+                cardEl.innerText = content;
+                cardEl.classList.add('bg-white', 'text-slate-800');
+                flippedCards.push(cardEl);
+
+                if (flippedCards.length === 2) {
+                    const pair1 = flippedCards[0].getAttribute('data-pair');
+                    const pair2 = flippedCards[1].getAttribute('data-pair');
+
+                    if (pair1 === pair2) {
+                        flippedCards.forEach(c => c.classList.add('matched', 'bg-green-100', 'border-green-500'));
+                        flippedCards = [];
+                        matchedPairs++;
+                        if (matchedPairs === 5) {
+                            setTimeout(() => alert('Hore! Kamu berhasil menemukan semua pasangan kartu!'), 300);
+                        }
+                    } else {
+                        setTimeout(() => {
+                            flippedCards.forEach(c => {
+                                c.innerText = '?';
+                                c.classList.remove('bg-white', 'text-slate-800');
+                            });
+                            flippedCards = [];
+                        }, 800);
+                    }
+                }
+            }
+        }
+
+        // ================= KUIS EVALUASI (10 SOAL) =================
+        const quizData = [
+            {
+                type: 'mc',
+                q: '1. Angka 7 pada bilangan 74.250 menempati nilai tempat...',
+                options: ['Satuan', 'Ratusan', 'Ribuan', 'Puluh Ribuan'],
+                ans: 3,
+                exp: 'Angka 7 berada pada posisi paling depan (digit ke-5 dari belakang), sehingga nilainya 70.000 (Puluh Ribuan).'
+            },
+            {
+                type: 'mc',
+                q: '2. Lambang bilangan "Delapan puluh lima ribu tiga ratus rupiah" ditulis...',
+                options: ['Rp 85.300', 'Rp 85.030', 'Rp 80.530', 'Rp 58.300'],
+                ans: 0,
+                exp: 'Delapan puluh lima ribu = 85.000, tiga ratus = 300 -> Rp 85.300.'
+            },
+            {
+                type: 'mc',
+                q: '3. Bentuk dekomposisi dari bilangan 62.408 adalah...',
+                options: ['60.000 + 2.000 + 400 + 80', '60.000 + 2.000 + 400 + 8', '60.000 + 200 + 40 + 8', '6.000 + 200 + 408'],
+                ans: 1,
+                exp: '62.408 = 60.000 (puluh ribuan) + 2.000 (ribuan) + 400 (ratusan) + 0 (puluhan) + 8 (satuan).'
+            },
+            {
+                type: 'mc',
+                q: '4. Ibu membeli baju seharga Rp 65.000 dan membayar dengan uang Rp 100.000. Kembaliannya adalah...',
+                options: ['Rp 25.000', 'Rp 35.000', 'Rp 45.000', 'Rp 15.000'],
+                ans: 1,
+                exp: 'Kembalian = 100.000 - 65.000 = Rp 35.000.'
+            },
+            {
+                type: 'mc',
+                q: '5. Manakah bilangan cacah yang nilainya paling BESAR di bawah ini?',
+                options: ['89.900', '98.100', '90.990', '89.999'],
+                ans: 1,
+                exp: '98.100 memiliki nilai puluh ribuan dan ribuan terbesar (98 ribu).'
+            },
+            {
+                type: 'tf',
+                q: '6. Benar atau Salah: Tanda titik pada penulisan 50.000 digunakan memisahkan nilai ribuan.',
+                options: ['Benar', 'Salah'],
+                ans: 0,
+                exp: 'Benar! Tanda titik memisahkan setiap 3 digit dari belakang.'
+            },
+            {
+                type: 'tf',
+                q: '7. Benar atau Salah: Bilangan 45.000 lebih kecil daripada 40.500.',
+                options: ['Benar', 'Salah'],
+                ans: 1,
+                exp: 'Salah! 45.000 lebih besar daripada 40.500.'
+            },
+            {
+                type: 'mc',
+                q: '8. Hasil komposing dari 90.000 + 5.000 + 300 + 20 + 1 adalah...',
+                options: ['95.321', '95.231', '93.521', '95.312'],
+                ans: 0,
+                exp: '90.000 + 5.000 + 300 + 20 + 1 = 95.321.'
+            },
+            {
+                type: 'mc',
+                q: '9. Membeli pensil Rp 4.000 dan buku Rp 12.000, total belanjaan adalah...',
+                options: ['Rp 15.000', 'Rp 16.000', 'Rp 18.000', 'Rp 20.000'],
+                ans: 1,
+                exp: '4.000 + 12.000 = Rp 16.000.'
+            },
+            {
+                type: 'mc',
+                q: '10. Berapa lembar uang Rp 20.000 yang dibutuhkan untuk membuat nominal Rp 100.000?',
+                options: ['3 lembar', '4 lembar', '5 lembar', '6 lembar'],
+                ans: 2,
+                exp: '100.000 / 20.000 = 5 lembar.'
+            }
+        ];
+
+        let quizCurrentIndex = 0;
+        let quizScore = 0;
+        let selectedOption = null;
+
+        function renderQuizQuestion() {
+            const q = quizData[quizCurrentIndex];
+            document.getElementById('quiz-progress').innerText = `Soal ${quizCurrentIndex + 1} dari ${quizData.length}`;
+            document.getElementById('quiz-question').innerText = q.q;
+
+            const optsContainer = document.getElementById('quiz-options');
+            optsContainer.innerHTML = '';
+            selectedOption = null;
+
+            document.getElementById('quiz-feedback').classList.add('hidden');
+            document.getElementById('btn-submit-quiz').innerText = 'Jawab';
+
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'w-full text-left p-4 rounded-xl border-2 border-slate-200 hover:border-brand-blue font-bold text-slate-700 transition flex items-center gap-3';
+                btn.innerHTML = `<span class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-sm">${String.fromCharCode(65 + idx)}</span> ${opt}`;
+                btn.onclick = () => {
+                    Array.from(optsContainer.children).forEach(c => c.classList.remove('border-brand-blue', 'bg-blue-50'));
+                    btn.classList.add('border-brand-blue', 'bg-blue-50');
+                    selectedOption = idx;
+                };
+                optsContainer.appendChild(btn);
+            });
+        }
+
+        function submitQuizAnswer() {
+            const btn = document.getElementById('btn-submit-quiz');
+            const feedback = document.getElementById('quiz-feedback');
+            const q = quizData[quizCurrentIndex];
+
+            if (btn.innerText === 'Lanjut') {
+                quizCurrentIndex++;
+                if (quizCurrentIndex < quizData.length) {
+                    renderQuizQuestion();
+                } else {
+                    showQuizFinalResult();
+                }
+                return;
+            }
+
+            if (selectedOption === null) {
+                alert('Pilih salah satu jawaban terlebih dahulu!');
+                return;
+            }
+
+            if (selectedOption === q.ans) {
+                quizScore += 10;
+                feedback.className = 'p-4 rounded-xl font-bold text-sm mb-4 bg-green-100 text-green-800 border border-green-300';
+                feedback.innerHTML = `<i class="fa-solid fa-circle-check"></i> BENAR! <br><span class="font-normal">${q.exp}</span>`;
+            } else {
+                feedback.className = 'p-4 rounded-xl font-bold text-sm mb-4 bg-red-100 text-red-800 border border-red-300';
+                feedback.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> SALAH! <br><span class="font-normal">${q.exp}</span>`;
+            }
+
+            feedback.classList.remove('hidden');
+            btn.innerText = 'Lanjut';
+        }
+
+        function showQuizFinalResult() {
+            document.getElementById('quiz-container').classList.add('hidden');
+            const resBox = document.getElementById('quiz-result');
+            resBox.classList.remove('hidden');
+
+            document.getElementById('final-score').innerText = quizScore;
+            const msg = document.getElementById('motivation-msg');
+
+            if (quizScore >= 80) {
+                msg.innerText = 'Luar biasa! Kamu sangat menguasai materi bilangan cacah sampai 100.000!';
+                msg.className = 'text-lg font-bold text-emerald-600 mb-6';
+            } else if (quizScore >= 60) {
+                msg.innerText = 'Bagus! Tingkatkan latihanmu agar nilainya semakin sempurna!';
+                msg.className = 'text-lg font-bold text-brand-orange mb-6';
+            } else {
+                msg.innerText = 'Jangan berkecil hati! Pelajari kembali materi dan simulasi ya!';
+                msg.className = 'text-lg font-bold text-red-500 mb-6';
+            }
+        }
+
+        function resetQuiz() {
+            quizCurrentIndex = 0;
+            quizScore = 0;
+            document.getElementById('quiz-result').classList.add('hidden');
+            document.getElementById('quiz-container').classList.remove('hidden');
+            renderQuizQuestion();
+        }
+
+        window.onload = function() {
+            updateSlideUI();
+        };
+    </script>
+</body>
+</html>
